@@ -25,6 +25,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "gl-matrix": "^3.3.0",
     "glsl-noise": "0.0.0",
     "twgl.js": "^4.2.0"
   }

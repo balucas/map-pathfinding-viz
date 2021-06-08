@@ -3,10 +3,10 @@
 const glsl = require("glslify");
 const twgl = require("twgl.js");
 const createDrawing = require("./renderer");
-const toronto = require("../static/toronto.json");
-
 const canvas = document.createElement("canvas");
+
 document.body.appendChild(canvas);
+
 const gl = canvas.getContext("webgl");
 
 const test = createDrawing(gl);
@@ -17,8 +17,17 @@ function render(time) {
   test.draw();
 }
 
-let nodes = toronto.nodes;
-let edges = toronto.edges;
+let mapData = {
+  nodes: [
+    { x: 0.0, y:0.0},
+    { x: 100.0, y: 50.0},
+    { x: 50.0, y: 100.0}
+  ],
+  edges: [[0,1],[1,2],[2,0]]
+}
+
+let nodes = mapData.nodes;
+let edges = mapData.edges;
 let verts = [];
 let indices = [];
 
@@ -36,10 +45,7 @@ edges.forEach(el => {
 let color = [1.0, 1.0, 1.0, 1];
 
 test.addObject(verts, indices, color);
-//test.addObject(verts, indices.slice(202, 702), [1.0,0.0,0,1]);
 
-// debug axes 
-//test.addObject([0,1,0,-1,-1,0,1,0], [0,1,2,3], [0.5,0.5,0.8,1]);
 requestAnimationFrame(render);
 
 document.addEventListener("click", e => {

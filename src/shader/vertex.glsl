@@ -1,12 +1,18 @@
 precision mediump float;
 
-varying vec4 v_color;
 attribute vec2 position;
-attribute vec4 color;
-uniform vec4 u_defaultColor;
+
+uniform mat3 u_matrix;
+uniform vec2 u_resolution;
 
 void main() {
-  gl_Position = vec4(position, 0, 1);
-  v_color = u_defaultColor;
-  //v_color = vec4(0, 1, 0, 1);
+  vec2 newPos = (u_matrix * vec3(position, 1)).xy;
+
+  vec2 zeroToOne = position.xy / u_resolution;
+
+  vec2 zeroToTwo = zeroToOne * 2.0;
+
+  vec2 clipSpace = zeroToTwo - 1.0;
+  
+  gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
 }
