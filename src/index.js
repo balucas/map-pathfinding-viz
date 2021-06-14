@@ -11,10 +11,20 @@ const gl = canvas.getContext("webgl");
 
 const test = createDrawing(gl);
 
+const request = require("./request");
+let toronto;
+request("/data/toronto.json", {
+  responseType: 'json',
+  progress: (x) => {console.log(x.percent)} 
+})
+  .then((res) => {
+    toronto = res;
+  });
+
 function render(time) {
   twgl.resizeCanvasToDisplaySize(gl.canvas);
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  test.draw();
+  test.draw(); 
 }
 
 let mapData = {
@@ -25,6 +35,8 @@ let mapData = {
   ],
   edges: [[0,1],[1,2],[2,0]]
 }
+
+mapData = toronto;
 
 let nodes = mapData.nodes;
 let edges = mapData.edges;
