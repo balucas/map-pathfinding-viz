@@ -2,7 +2,7 @@
 
 const glsl = require("glslify");
 const twgl = require("twgl.js");
-const glmatrix = require("gl-matrix")
+const mat3 = require("gl-matrix/mat3");
 
 const vertexShader = glsl.file("./shader/vertex.glsl");
 const fragmentShader = glsl.file("./shader/fragment.glsl");
@@ -11,24 +11,43 @@ module.exports = function(gl) {
   const programInfo = twgl.createProgramInfo(gl, [vertexShader, fragmentShader]);
   const objects = [];
   const resolution = [gl.canvas.width, gl.canvas.height]; 
-  const projection = glmatrix.mat3.create();
-  glmatrix.mat3.projection(projection, gl.canvas.width, gl.canvas.height);
+  const viewProjectionMat = mat3.create();
+  const camera = {
+    x: 0,
+    y: 0,
+    zoom: 1.5
+  }
 
   twgl.addExtensionsToContext(gl);
+  
+  function updateViewProjection() {
+    mat3.projection(viewProjectionMat, gl.canvas.width, gl.canvas.height);
+    
+    // make camera matrix
+    const zoomScale = 1 / camera.zoom;
+    let cameraMat = mat3.create(); 
+    mat3.identity(cameraMat);
+    mat3.translate(cameraMat, cameraMat, [camera.x, camera.y]);
+    mat3.scale(cameraMat, cameraMat, [zoomScale, zoomScale]);
+    
+    let viewMat = mat3.create();
+    mat3.invert(viewMat, cameraMat);
+    mat3.multiply(viewProjectionMat, viewProjectionMat, viewMat);
+  }
 
   function addObject(verts, inds, color) {
     const bufferData = {
       position: { numComponents: 2, data: new Float32Array(verts) },
       indices:  { numComponents: 2, data: new Uint32Array(inds) }
     };
+
     const uniforms = {
       u_defaultColor: color,
-      u_matrix: projection,
+      u_matrix: viewProjectionMat,
       u_resolution: resolution
     }
 
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, bufferData);
-    
     const obj = {
       bufferInfo: bufferInfo,
       uniforms: uniforms
@@ -46,6 +65,7 @@ module.exports = function(gl) {
   return {
     updateData,
     addObject,
+    camera,
 
     draw() {
       if (!objects.length) {
@@ -57,6 +77,8 @@ module.exports = function(gl) {
 
       gl.clearColor(0.0, 0.06, 0.21, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
+      
+      updateViewProjection();
       
       objects.forEach(obj => {
         gl.useProgram(programInfo.program);

@@ -11,6 +11,7 @@ const gl = canvas.getContext("webgl");
 
 const test = createDrawing(gl);
 
+// GET MAP DATA
 const request = require("./request");
 let toronto;
 request("/data/newto.json", {
@@ -63,6 +64,9 @@ function main(){
   requestAnimationFrame(render);
 
   document.addEventListener("click", e => {
-    console.log("clicked!");
+    console.log("clicked! moving camera");
+    test.camera.zoom *= 1.1;
+    console.log("camera at: " + test.camera.x);
+    requestAnimationFrame(render);
   })
 }
