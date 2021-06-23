@@ -76,7 +76,10 @@ module.exports = function(gl) {
       }
       resolution[0] = gl.canvas.width; 
       resolution[1] = gl.canvas.height; 
+      
+      twgl.resizeCanvasToDisplaySize(gl.canvas);
 
+      gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
       gl.clearColor(0.0, 0.06, 0.21, 1.0);
       gl.clear(gl.COLOR_BUFFER_BIT);
       

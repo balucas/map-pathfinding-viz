@@ -45,6 +45,13 @@ function main(){
 
 function attachHandlers() {
   
+  // handle window resize
+  function handleResize(e) {
+    test.draw();
+  }
+  
+  window.addEventListener('resize', handleResize);
+  
   let camera = test.camera;
   let viewProjectionMat = test.viewProjectionMat;
   let updateViewProjection = test.updateViewProjection;
