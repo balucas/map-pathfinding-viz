@@ -13,10 +13,10 @@ module.exports = function(gl) {
   const resolution = [gl.canvas.width, gl.canvas.height]; 
   const viewProjectionMat = mat3.create();
   const camera = {
-    x: 0,
-    y: 0,
-    zoom: 1.5
-  }
+    x: -33948,
+    y: -17689,
+    zoom: 0.0271311
+   }
 
   twgl.addExtensionsToContext(gl);
   
@@ -64,8 +64,10 @@ module.exports = function(gl) {
   
   return {
     updateData,
+    updateViewProjection,
     addObject,
     camera,
+    viewProjectionMat,
 
     draw() {
       if (!objects.length) {
