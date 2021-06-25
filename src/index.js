@@ -9,6 +9,7 @@ const canvas = document.createElement("canvas");
 document.body.appendChild(canvas);
 
 const gl = canvas.getContext("webgl");
+const shapes = require("./shapes")(gl);
 
 const scene = createDrawing(gl);
 
@@ -94,20 +95,16 @@ function attachHandlers() {
     const pos = transformPoint(
         startInvViewProjMat,
         getClipSpaceMousePosition(e));
-    let mark = [0, 0,
-                -5, -25,
-                5, -25,
-                0, -30];
-    let indices = [0,1,2,2,3,1];
     
+    let marker = shapes.marker;
     let transforms = {
       x: pos[0],
       y: pos[1],
-      scale: 2,
+      scale: 5,
       zoom: false
     }
     
-    scene.addObject(mark, indices, [0.8117,1,0.0157,1], gl.TRIANGLES, transforms);
+    scene.addObject(marker.verts, marker.indices, [0.85,0,0,1], marker.drawType, transforms);
     scene.draw();
   }
   

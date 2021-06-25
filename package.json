@@ -5,7 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "gulp build"
+    "build": "gulp build",
+    "build-start": "gulp build && node server.js"
   },
   "keywords": [
     "GLSL",
