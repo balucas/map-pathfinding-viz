@@ -104,11 +104,11 @@ function attachHandlers() {
     const pos = transformPoint(
         startInvViewProjMat,
         getClipSpaceMousePosition(e));
-    
+    const closest = graph.qt.find(pos[0], pos[1]);
     let marker = shapes.marker;
     let transforms = {
-      x: pos[0],
-      y: pos[1],
+      x: closest.x,
+      y: closest.y,
       scale: 5,
       zoom: false
     }
