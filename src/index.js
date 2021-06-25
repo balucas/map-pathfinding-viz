@@ -13,28 +13,20 @@ const gl = canvas.getContext("webgl");
 const shapes = require("./shapes")(gl);
 
 const scene = createDrawing(gl);
+scene.draw();
 
 // GET MAP DATA
-let progress = {
-  message: "",
-  completed: 0
-}
 let nodes;
 let edges;
 let graph;
-loadMap("toronto", progress)
+loadMap("toronto", updateLoadingText)
   .then((res) => {
     nodes = res.nodes;
     edges = res.edges;
     graph = res.mapGraph;
+    document.getElementById("overlay").style.display = "none";
     main();
   })
-
-function render(time) {
-  twgl.resizeCanvasToDisplaySize(gl.canvas);
-  gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  scene.draw(); 
-}
 
 function main(){
   // initialize quadtree
@@ -49,7 +41,14 @@ function main(){
 
   attachHandlers();
 
-  requestAnimationFrame(render);
+  requestAnimationFrame(scene.draw);
+}
+
+function updateLoadingText(progress) {
+  let msg = progress.message;
+  let pct = progress.completed;
+  console.log(pct);
+  document.getElementById("progress").innerHTML = `${msg}: ${pct}%`;
 }
 
 function attachHandlers() {

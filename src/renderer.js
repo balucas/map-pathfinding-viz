@@ -83,7 +83,6 @@ module.exports = function(gl) {
     draw() {
       if (!objects.length) {
         console.error("no objects to draw!");
-        return;
       }
       resolution[0] = gl.canvas.width; 
       resolution[1] = gl.canvas.height; 

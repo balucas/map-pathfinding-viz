@@ -53,9 +53,10 @@ module.exports = function(name, progress) {
 
   function reportProgress(msg) {
     return function(e) {
-      progress.message = msg;
-      progress.completed = Math.round(e.percent * 100)
-      console.log(progress.message + " " + progress.completed);
+      let prog = {}
+      prog.message = msg;
+      prog.completed = Math.round(e.percent * 100);
+      progress(prog);
     } 
   }
 }
