@@ -10,7 +10,7 @@ document.body.appendChild(canvas);
 
 const gl = canvas.getContext("webgl");
 
-const test = createDrawing(gl);
+const scene = createDrawing(gl);
 
 // GET MAP DATA
 let progress = {
@@ -29,14 +29,13 @@ loadMap("toronto", progress)
 function render(time) {
   twgl.resizeCanvasToDisplaySize(gl.canvas);
   gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-  test.draw(); 
+  scene.draw(); 
 }
 
 function main(){
-  debugger;
-  let color = [1.0, 1.0, 1.0, 1];
+  let color = [1.0, 1.0, 1.0, 1.0];
 
-  test.addObject(nodes, edges, color);
+  scene.addObject(nodes, edges, color, gl.LINES);
 
   attachHandlers();
 
@@ -47,19 +46,21 @@ function attachHandlers() {
   
   // handle window resize
   function handleResize(e) {
-    test.draw();
+    scene.draw();
   }
   
   window.addEventListener('resize', handleResize);
   
-  let camera = test.camera;
-  let viewProjectionMat = test.viewProjectionMat;
-  let updateViewProjection = test.updateViewProjection;
+  let camera = scene.camera;
+  let viewProjectionMat = scene.viewProjectionMat;
+  let updateViewProjection = scene.updateViewProjection;
   let startInvViewProjMat = mat3.create();
   let startCamera;
   let startPos;
   let startClipPos;
   let startMousePos;
+  
+  let moved = false;
   
   function moveCamera(e) {
     const pos = transformPoint(
@@ -68,17 +69,46 @@ function attachHandlers() {
     
     camera.x = startCamera.x + startPos[0] - pos[0];
     camera.y = startCamera.y + startPos[1] - pos[1];
-    test.draw();
+    scene.draw();
   }
   
   function handleMouseMove(e) {
+    moved = true;
     moveCamera(e);
   }
   
   function handleMouseUp(e) {
-    test.draw();
+    scene.draw();
     window.removeEventListener('mousemove', handleMouseMove);
     window.removeEventListener('mouseup', handleMouseUp);
+    
+    // check if mouse click (not drag)
+    if (!moved) {
+      console.log("mouse tap!");
+      handleClick(e);
+    }
+    moved = false;
+  }
+  
+  function handleClick(e) {
+    const pos = transformPoint(
+        startInvViewProjMat,
+        getClipSpaceMousePosition(e));
+    let mark = [0, 0,
+                -5, -25,
+                5, -25,
+                0, -30];
+    let indices = [0,1,2,2,3,1];
+    
+    let transforms = {
+      x: pos[0],
+      y: pos[1],
+      scale: 2,
+      zoom: false
+    }
+    
+    scene.addObject(mark, indices, [0.8117,1,0.0157,1], gl.TRIANGLES, transforms);
+    scene.draw();
   }
   
   canvas.addEventListener('mousedown', (e) => {
@@ -86,7 +116,6 @@ function attachHandlers() {
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
   
-    //startInvViewProjMat = m3.inverse(viewProjectionMat);
     mat3.invert(startInvViewProjMat, viewProjectionMat);
     
     startCamera = Object.assign({}, camera);
@@ -95,13 +124,12 @@ function attachHandlers() {
         startInvViewProjMat,
         startClipPos);
     startMousePos = [e.clientX, e.clientY];
-    test.draw();
+    scene.draw();
   });
   
   canvas.addEventListener('wheel', (e) => {
     e.preventDefault();  
     const [clipX, clipY] = getClipSpaceMousePosition(e);
-    console.log(camera);
     // position before zooming
     let temp = mat3.create();
     mat3.invert(temp, viewProjectionMat); 
@@ -126,7 +154,7 @@ function attachHandlers() {
     camera.x += preZoomX - postZoomX;
     camera.y += preZoomY - postZoomY;  
     
-    test.draw();
+    scene.draw();
   });
   
   function transformPoint(m, v) {

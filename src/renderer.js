@@ -13,9 +13,12 @@ module.exports = function(gl) {
   const resolution = [gl.canvas.width, gl.canvas.height]; 
   const viewProjectionMat = mat3.create();
   const camera = {
-    x: -33948,
-    y: -17689,
-    zoom: 0.0271311
+    //x: -33948,
+    //y: -17689,
+    //zoom: 0.0271311
+    x: 0,
+    y: 0,
+    zoom: 1
    }
 
   twgl.addExtensionsToContext(gl);
@@ -26,7 +29,6 @@ module.exports = function(gl) {
     // make camera matrix
     const zoomScale = 1 / camera.zoom;
     let cameraMat = mat3.create(); 
-    mat3.identity(cameraMat);
     mat3.translate(cameraMat, cameraMat, [camera.x, camera.y]);
     mat3.scale(cameraMat, cameraMat, [zoomScale, zoomScale]);
     
@@ -34,23 +36,33 @@ module.exports = function(gl) {
     mat3.invert(viewMat, cameraMat);
     mat3.multiply(viewProjectionMat, viewProjectionMat, viewMat);
   }
+  
+  function computeMatrixUniform(transforms) {
+    let mat = mat3.create();
+    mat3.identity(mat);
+    mat3.translate(mat, mat, [transforms.x, transforms.y]);
+    mat3.scale(mat, mat, [transforms.scale, transforms.scale]);
+    
+    if (!transforms.zoom) {
+      mat3.scale(mat, mat, [1/camera.zoom, 1/camera.zoom]);
+      console.log(mat);
+    }
+    
+    mat3.multiply(mat, viewProjectionMat, mat);
+    return mat;
+  }
 
-  function addObject(verts, inds, color) {
+  function addObject(verts, inds, color, type, transforms = { x: 0, y: 0, scale: 1, zoom: true }) {
     const bufferData = {
       position: { numComponents: 2, data: new Float32Array(verts) },
       indices:  { numComponents: 2, data: new Uint32Array(inds) }
     };
-
-    const uniforms = {
-      u_defaultColor: color,
-      u_matrix: viewProjectionMat,
-      u_resolution: resolution
-    }
-
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, bufferData);
     const obj = {
       bufferInfo: bufferInfo,
-      uniforms: uniforms
+      color: color,
+      drawType: type,
+      transforms: transforms
     };
     
     objects.push(obj);
@@ -86,10 +98,14 @@ module.exports = function(gl) {
       updateViewProjection();
       
       objects.forEach(obj => {
+        const uniforms = {
+          u_color: obj.color,
+          u_matrix: computeMatrixUniform(obj.transforms)
+        }
         gl.useProgram(programInfo.program);
         twgl.setBuffersAndAttributes(gl, programInfo, obj.bufferInfo);
-        twgl.setUniforms(programInfo, obj.uniforms);
-        twgl.drawBufferInfo(gl, obj.bufferInfo, gl.LINES);
+        twgl.setUniforms(programInfo, uniforms);
+        twgl.drawBufferInfo(gl, obj.bufferInfo, obj.drawType);
       })
 
     }
