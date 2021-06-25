@@ -3,6 +3,7 @@
 const loadMap = require("./loadMap");
 const twgl = require("twgl.js");
 const mat3 = require("gl-matrix/mat3");
+const quadtree = require("d3-quadtree").quadtree;
 const createDrawing = require("./renderer");
 const canvas = document.createElement("canvas");
 
@@ -37,7 +38,10 @@ function render(time) {
 
 function main(){
   // initialize quadtree
-  
+  graph.qt = quadtree()
+    .x(d => d.x)
+    .y(d => d.y)
+    .addAll(graph.nodes)
   
   // draw map
   let color = [1.0, 1.0, 1.0, 1.0];

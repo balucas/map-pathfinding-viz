@@ -9,7 +9,12 @@ gulp.task("build", function() {
     debug: true
   })
     .transform("glslify")
-    .transform("babelify", { presets: ["env"] })
+    .transform("babelify", { 
+      presets: ["env"],
+      sourceMaps: true,
+      global: true,
+      ignore: [/\/node_modules\/(?!d3-quadtree\/)/]
+    })
     .bundle()
     .pipe(source("app.js"))
     .pipe(gulp.dest("public/js"));

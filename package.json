@@ -26,6 +26,7 @@
     "vinyl-source-stream": "^2.0.0"
   },
   "dependencies": {
+    "d3-quadtree": "^3.0.1",
     "express": "^4.17.1",
     "gl-matrix": "^3.3.0",
     "glsl-noise": "0.0.0",
