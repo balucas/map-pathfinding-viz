@@ -1,9 +1,11 @@
 const request = require("./request");
+const graph = require("./graph");
 const endpoint = "./data/";
 
 module.exports = function(name, progress) {
   let nodes;
   let edges;
+  let mapGraph = graph();
   
   return loadNodes()
           .then((res) => {
@@ -13,7 +15,7 @@ module.exports = function(name, progress) {
           .then((res) => {
             setEdgeLinks(res);
             return {
-              nodes, edges
+              nodes, edges, mapGraph
             }
           })
   
@@ -33,14 +35,20 @@ module.exports = function(name, progress) {
   
   function setNodeCoordinates(buffer) {
     nodes = new Int32Array(buffer);   
-    // TODO: add to graph structure
+    // add to graph structure
+    for (let i = 0; i < nodes.length / 2; ++i) {
+      mapGraph.addNode(nodes[i*2], nodes[i*2 + 1]);
+    }
+    console.log(mapGraph.nodes.length);
   }
   
   function setEdgeLinks(buffer) {
     edges = new Int32Array(buffer);
-    edges.forEach((v,i) => {
-      edges[i] -= 1;
-    });
+    for (let i = 0; i < edges.length / 2; ++i) {
+      edges[i*2] -= 1;
+      edges[i*2 + 1] -= 1;
+      mapGraph.addLink([edges[i*2], edges[i*2 + 1]]);
+    }
   }
 
   function reportProgress(msg) {

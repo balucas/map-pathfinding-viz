@@ -20,10 +20,12 @@ let progress = {
 }
 let nodes;
 let edges;
+let graph;
 loadMap("toronto", progress)
   .then((res) => {
     nodes = res.nodes;
     edges = res.edges;
+    graph = res.mapGraph;
     main();
   })
 
@@ -34,8 +36,11 @@ function render(time) {
 }
 
 function main(){
+  // initialize quadtree
+  
+  
+  // draw map
   let color = [1.0, 1.0, 1.0, 1.0];
-
   scene.addObject(nodes, edges, color, gl.LINES);
 
   attachHandlers();

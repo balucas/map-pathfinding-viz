@@ -45,7 +45,6 @@ module.exports = function(gl) {
     
     if (!transforms.zoom) {
       mat3.scale(mat, mat, [1/camera.zoom, 1/camera.zoom]);
-      console.log(mat);
     }
     
     mat3.multiply(mat, viewProjectionMat, mat);
