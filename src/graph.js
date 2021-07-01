@@ -12,8 +12,8 @@ module.exports = function() {
   
   function addLink(link) {
     const [a, b] = link;
-    nodes[a].links.push(nodes[b]);
-    nodes[b].links.push(nodes[a]);
+    nodes[a].links.push(b);
+    nodes[b].links.push(a);
   }
   
   return {

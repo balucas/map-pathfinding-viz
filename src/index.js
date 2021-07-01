@@ -24,24 +24,46 @@ loadMap("toronto", updateLoadingText)
     nodes = res.nodes;
     edges = res.edges;
     graph = res.mapGraph;
-    document.getElementById("overlay").style.display = "none";
     main();
   })
 
+let sliceNum = 605000;
+let ind = 0;
+
 function main(){
+  // TODO: this, but properly (async for-loop?)
+  updateLoadingText({message: "Creating Quadtree", completed: 14});
+
   // initialize quadtree
   graph.qt = quadtree()
     .x(d => d.x)
     .y(d => d.y)
     .addAll(graph.nodes)
+
+  // TODO: this, but properly (async for-loop?)
+  updateLoadingText({message: "Creating Quadtree", completed: 100});
   
+  document.getElementById("overlay").style.display = "none";
   // draw map
-  let color = [1.0, 1.0, 1.0, 1.0];
+  let color = [0.8, 0.8, 0.8, 1.0];
   scene.addObject(nodes, edges, color, gl.LINES);
 
   attachHandlers();
 
-  requestAnimationFrame(scene.draw);
+  testRender();
+  //requestAnimationFrame(scene.draw);
+}
+
+function testRender() {
+  ind = scene.addObject(nodes, edges.slice(sliceNum), [0.2235, 1, 0.0784, 1], gl.LINES);
+  scene.draw();
+  sliceNum -= 1000;
+  if (sliceNum > 0) {
+    scene.removeObject(ind);
+    requestAnimationFrame(testRender);
+  } else {
+    return;
+  }
 }
 
 function updateLoadingText(progress) {

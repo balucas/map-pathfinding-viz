@@ -13,12 +13,12 @@ module.exports = function(gl) {
   const resolution = [gl.canvas.width, gl.canvas.height]; 
   const viewProjectionMat = mat3.create();
   const camera = {
-    //x: -33948,
-    //y: -17689,
-    //zoom: 0.0271311
-    x: 0,
-    y: 0,
-    zoom: 1
+    x: -33948,
+    y: -17689,
+    zoom: 0.0271311
+    //x: 0,
+    //y: 0,
+    //zoom: 1
    }
 
   twgl.addExtensionsToContext(gl);
@@ -65,24 +65,36 @@ module.exports = function(gl) {
     };
     
     objects.push(obj);
+    return objects.length - 1;
   }
   
-  // Init/Re-init BufferInfo and set
-  function updateData() {
-    bufferInfo = twgl.createBufferInfoFromArrays(gl, bufferData);
-    twgl.setBuffersAndAttributes(gl, programInfo, bufferInfo);
+  function removeObject(index) {
+    objects.splice(index, 1);
+  }
+  
+  function updateObject(verts, inds, objectIndex) {
+    const obj = objects[objectIndex];
+    const bufferData = {
+      position: { numComponents: 2, data: new Float32Array(verts) },
+      indices:  { numComponents: 2, data: new Uint32Array(inds) }
+    }
+
+    debugger;
+    twgl.setAttribInfoBufferFromArray(gl, obj.bufferInfo.attribs.position, bufferData.position);
+    twgl.setAttribInfoBufferFromArray(gl, obj.bufferInfo.attribs.indices, bufferData.indices);
   }
   
   return {
-    updateData,
-    updateViewProjection,
     addObject,
+    updateObject,
+    removeObject,
+    updateViewProjection,
     camera,
     viewProjectionMat,
 
     draw() {
       if (!objects.length) {
-        console.error("no objects to draw!");
+        console.log("no objects to draw");
       }
       resolution[0] = gl.canvas.width; 
       resolution[1] = gl.canvas.height; 
