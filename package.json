@@ -30,6 +30,7 @@
     "express": "^4.17.1",
     "gl-matrix": "^3.3.0",
     "glsl-noise": "0.0.0",
+    "ngraph.graph": "^19.1.0",
     "twgl.js": "^4.2.0"
   }
 }

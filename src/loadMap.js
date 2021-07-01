@@ -1,11 +1,11 @@
 const request = require("./request");
-const graph = require("./graph");
+const createGraph = require("ngraph.graph");
 const endpoint = "./data/";
 
 module.exports = function(name, progress) {
   let nodes;
   let edges;
-  let mapGraph = graph();
+  let mapGraph = createGraph();
   
   return loadNodes()
           .then((res) => {
@@ -37,9 +37,11 @@ module.exports = function(name, progress) {
     nodes = new Int32Array(buffer);   
     // add to graph structure
     for (let i = 0; i < nodes.length / 2; ++i) {
-      mapGraph.addNode(nodes[i*2], nodes[i*2 + 1]);
+      mapGraph.addNode(i, {
+        x: nodes[i*2], 
+        y: nodes[i*2 + 1]
+      });
     }
-    console.log(mapGraph.nodes.length);
   }
   
   function setEdgeLinks(buffer) {
@@ -47,7 +49,7 @@ module.exports = function(name, progress) {
     for (let i = 0; i < edges.length / 2; ++i) {
       edges[i*2] -= 1;
       edges[i*2 + 1] -= 1;
-      mapGraph.addLink([edges[i*2], edges[i*2 + 1]]);
+      mapGraph.addLink(edges[i*2], edges[i*2 + 1]);
     }
   }
 

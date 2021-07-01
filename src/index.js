@@ -36,9 +36,16 @@ function main(){
 
   // initialize quadtree
   graph.qt = quadtree()
-    .x(d => d.x)
-    .y(d => d.y)
-    .addAll(graph.nodes)
+    .x(n => {
+      return n.data.x; 
+    })
+    .y(n => {
+      return n.data.y; 
+    });
+
+  graph.forEachNode(function(node) {
+    graph.qt.add(node);
+  });
 
   // TODO: this, but properly (async for-loop?)
   updateLoadingText({message: "Creating Quadtree", completed: 100});
@@ -50,8 +57,8 @@ function main(){
 
   attachHandlers();
 
-  testRender();
-  //requestAnimationFrame(scene.draw);
+  //testRender();
+  requestAnimationFrame(scene.draw);
 }
 
 function testRender() {
@@ -128,12 +135,11 @@ function attachHandlers() {
     const closest = graph.qt.find(pos[0], pos[1]);
     let marker = shapes.marker;
     let transforms = {
-      x: closest.x,
-      y: closest.y,
+      x: closest.data.x,
+      y: closest.data.y,
       scale: 5,
       zoom: false
     }
-    
     scene.addObject(marker.verts, marker.indices, [0.85,0,0,1], marker.drawType, transforms);
     scene.draw();
   }
