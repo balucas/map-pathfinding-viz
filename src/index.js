@@ -5,6 +5,7 @@ const twgl = require("twgl.js");
 const mat3 = require("gl-matrix/mat3");
 const createDrawing = require("./renderer");
 const initShapes = require("./shapes");
+const initVizCtrl = require("./pathviz");
 
 const quadtree = require("d3-quadtree").quadtree;
 const aStar = require("ngraph.path").aStar;
@@ -32,10 +33,14 @@ loadMap("toronto", updateLoadingText)
 
 let sliceNum = 605000;
 let ind = 0;
+let controller;
 
 function main(){
   // TODO: this, but properly (async for-loop?)
   updateLoadingText({message: "Creating Quadtree", completed: 14});
+  
+  // **TEST**
+  controller = initVizCtrl(graph, scene, shapes);
 
   // initialize quadtree
   graph.qt = quadtree()
@@ -101,14 +106,6 @@ function attachHandlers() {
   let startClipPos;
   
   let moved = false;
-  let markerObjInds = [];
-  let selectedNodes = [];
-  let clickStage = 0;
-  /*
-    * 0 : default stage
-    * 1 : start node selected
-    * 2 : end node selected
-   */
   
   function handleMouseDown(e) {
     e.preventDefault();
@@ -172,51 +169,14 @@ function attachHandlers() {
     moved = false;
   }
   
+  var name = "start";
   function handleClick(e) {
-    // Test
-    if (clickStage == 2) {
-      selectedNodes = [];
-    }
-    clickStage = (clickStage + 1) % 3;
-
     const pos = transformPoint(
         startInvViewProjMat,
         getClipSpaceMousePosition(e));
-    const closest = graph.qt.find(pos[0], pos[1]);
     
-    // Test
-    selectedNodes.push(closest.id);
-
-    let marker = shapes.marker;
-    let transforms = {
-      x: closest.data.x,
-      y: closest.data.y,
-      scale: 5,
-      zoom: false
-    }
-    markerObjInds.push(
-      scene.addObject(marker.verts, marker.indices, {
-        color: [0.85,0,0,1], 
-        type: marker.drawType, 
-        layer: "top",
-        transforms: transforms
-      })
-    );
-    scene.draw();
-     
-    // Test
-    if (clickStage == 2) {
-      console.log("STAGE 2");
-      var pathFinder = aStar(graph, {});   
-      let res = pathFinder.find(selectedNodes[0], selectedNodes[1])
-      //let path = res.path.map(x => x.id);
-      let visited = res.visited;
-      scene.addObject(nodes, visited, {
-        color: [0.2235, 1, 0.0784, 1],
-        type: gl.LINES
-      });
-      scene.draw();
-    }
+    controller.setNode(pos, name);
+    name = name == "start" ? "target" : "start";
   }
   
   function moveCamera(e) {

@@ -70,7 +70,7 @@ module.exports = function(gl) {
     } else {
       sceneLayers[props.layer].push(obj);
     }
-    return sceneLayers[props.layer].length; 
+    return obj;
   }
   
   function drawObject(obj) {
