@@ -31,6 +31,7 @@
     "gl-matrix": "^3.3.0",
     "glsl-noise": "0.0.0",
     "ngraph.graph": "^19.1.0",
+    "ngraph.path": "git+https://github.com/balucas/ngraph.path.git",
     "twgl.js": "^4.2.0"
   }
 }

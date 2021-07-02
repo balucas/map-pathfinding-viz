@@ -7,6 +7,9 @@ const quadtree = require("d3-quadtree").quadtree;
 const createDrawing = require("./renderer");
 const canvas = document.createElement("canvas");
 
+// Test
+const aStar = require("ngraph.path").aStar;
+
 document.body.appendChild(canvas);
 
 const gl = canvas.getContext("webgl");
@@ -99,6 +102,14 @@ function attachHandlers() {
   let startMousePos;
   
   let moved = false;
+  let markerObjInds = [];
+  let selectedNodes = [];
+  let clickStage = 0;
+  /*
+    * 0 : default stage
+    * 1 : start node selected
+    * 2 : end node selected
+   */
   
   function moveCamera(e) {
     const pos = transformPoint(
@@ -129,10 +140,20 @@ function attachHandlers() {
   }
   
   function handleClick(e) {
+    // Test
+    if (clickStage == 2) {
+      selectedNodes = [];
+    }
+    clickStage = (clickStage + 1) % 3;
+
     const pos = transformPoint(
         startInvViewProjMat,
         getClipSpaceMousePosition(e));
     const closest = graph.qt.find(pos[0], pos[1]);
+    
+    // Test
+    selectedNodes.push(closest.id);
+
     let marker = shapes.marker;
     let transforms = {
       x: closest.data.x,
@@ -140,8 +161,22 @@ function attachHandlers() {
       scale: 5,
       zoom: false
     }
-    scene.addObject(marker.verts, marker.indices, [0.85,0,0,1], marker.drawType, transforms);
+    markerObjInds.push(
+      scene.addObject(marker.verts, marker.indices, [0.85,0,0,1], marker.drawType, transforms)
+    );
     scene.draw();
+     
+    // Test
+    if (clickStage == 2) {
+      console.log("STAGE 2");
+      var pathFinder = aStar(graph, {});   
+      let res = pathFinder.find(selectedNodes[0], selectedNodes[1])
+      //let path = res.path.map(x => x.id);
+      let visited = res.visited;
+      debugger;
+      scene.addObject(nodes, visited, [0.2235, 1, 0.0784, 1], gl.LINES);
+      scene.draw();
+    }
   }
   
   canvas.addEventListener('mousedown', (e) => {
