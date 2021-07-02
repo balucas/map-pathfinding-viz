@@ -9,16 +9,14 @@ const fragmentShader = glsl.file("./shader/fragment.glsl");
 
 module.exports = function(gl) {
   const programInfo = twgl.createProgramInfo(gl, [vertexShader, fragmentShader]);
-  const objects = [];
   const resolution = [gl.canvas.width, gl.canvas.height]; 
   const viewProjectionMat = mat3.create();
+  const sceneLayers = { base: [], mid: [], top: [] };
+
   const camera = {
     x: -33948,
     y: -17689,
     zoom: 0.0271311
-    //x: 0,
-    //y: 0,
-    //zoom: 1
    }
 
   twgl.addExtensionsToContext(gl);
@@ -51,7 +49,10 @@ module.exports = function(gl) {
     return mat;
   }
 
-  function addObject(verts, inds, color, type, transforms = { x: 0, y: 0, scale: 1, zoom: true }) {
+  function addObject(verts, inds, props) {
+    props.transforms = props.transforms ? props.transforms : { x: 0, y: 0, scale: 1, zoom: true };
+    props.layer = props.layer ? props.layer : "mid";
+
     const bufferData = {
       position: { numComponents: 2, data: new Float32Array(verts) },
       indices:  { numComponents: 2, data: new Uint32Array(inds) }
@@ -59,43 +60,37 @@ module.exports = function(gl) {
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, bufferData);
     const obj = {
       bufferInfo: bufferInfo,
-      color: color,
-      drawType: type,
-      transforms: transforms
+      color: props.color,
+      drawType: props.type,
+      transforms: props.transforms
     };
     
-    objects.push(obj);
-    return objects.length - 1;
-  }
-  
-  function removeObject(index) {
-    objects.splice(index, 1);
-  }
-  
-  function updateObject(verts, inds, objectIndex) {
-    const obj = objects[objectIndex];
-    const bufferData = {
-      position: { numComponents: 2, data: new Float32Array(verts) },
-      indices:  { numComponents: 2, data: new Uint32Array(inds) }
+    if (typeof props.layerIndex !== "undefined") {
+      sceneLayers[props.layer] = obj;
+    } else {
+      sceneLayers[props.layer].push(obj);
     }
-
-    debugger;
-    twgl.setAttribInfoBufferFromArray(gl, obj.bufferInfo.attribs.position, bufferData.position);
-    twgl.setAttribInfoBufferFromArray(gl, obj.bufferInfo.attribs.indices, bufferData.indices);
+    return sceneLayers[props.layer].length; 
+  }
+  
+  function drawObject(obj) {
+    const uniforms = {
+      u_color: obj.color,
+      u_matrix: computeMatrixUniform(obj.transforms)
+    }
+    gl.useProgram(programInfo.program);
+    twgl.setBuffersAndAttributes(gl, programInfo, obj.bufferInfo);
+    twgl.setUniforms(programInfo, uniforms);
+    twgl.drawBufferInfo(gl, obj.bufferInfo, obj.drawType);
   }
   
   return {
     addObject,
-    updateObject,
-    removeObject,
     updateViewProjection,
     camera,
     viewProjectionMat,
 
     draw() {
-      if (!objects.length) {
-        console.log("no objects to draw");
-      }
       resolution[0] = gl.canvas.width; 
       resolution[1] = gl.canvas.height; 
       
@@ -107,17 +102,9 @@ module.exports = function(gl) {
       
       updateViewProjection();
       
-      objects.forEach(obj => {
-        const uniforms = {
-          u_color: obj.color,
-          u_matrix: computeMatrixUniform(obj.transforms)
-        }
-        gl.useProgram(programInfo.program);
-        twgl.setBuffersAndAttributes(gl, programInfo, obj.bufferInfo);
-        twgl.setUniforms(programInfo, uniforms);
-        twgl.drawBufferInfo(gl, obj.bufferInfo, obj.drawType);
-      })
-
+      sceneLayers.base.forEach(drawObject);
+      sceneLayers.mid.forEach(drawObject);
+      sceneLayers.top.forEach(drawObject);
     }
   }
 }
