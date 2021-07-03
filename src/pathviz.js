@@ -28,7 +28,7 @@ module.exports = function(graph, scene, shapes) {
     const transforms = {
       x: node.data.x,
       y: node.data.y,
-      scale: 5,
+      scale: shapes[name].scale,
       zoom: false
     };
 
@@ -36,13 +36,14 @@ module.exports = function(graph, scene, shapes) {
       STNodes[name] = {
         node: node,
         sceneObj: scene.addObject(shapes[name].verts, shapes[name].indices, {
-          color: [0.85,0,0,1],
+          color: shapes[name].color,
           type: shapes[name].drawType,
           layer: "top",
         })
       }
     } 
     
+    STNodes[name].node = node;
     STNodes[name].sceneObj.transforms = transforms;
     scene.draw();
   }

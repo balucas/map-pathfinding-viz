@@ -1,14 +1,12 @@
 "use strict";
 
 const loadMap = require("./loadMap");
-const twgl = require("twgl.js");
 const mat3 = require("gl-matrix/mat3");
 const createDrawing = require("./renderer");
 const initShapes = require("./shapes");
 const initVizCtrl = require("./pathviz");
 
-const quadtree = require("d3-quadtree").quadtree;
-const aStar = require("ngraph.path").aStar;
+const colors = require("./theme").default;
 
 const canvas = document.createElement("canvas");
 document.body.appendChild(canvas);
@@ -32,36 +30,20 @@ loadMap("toronto", updateLoadingText)
   })
 
 let sliceNum = 605000;
-let ind = 0;
 let controller;
 
 function main(){
   // TODO: this, but properly (async for-loop?)
   updateLoadingText({message: "Creating Quadtree", completed: 14});
   
-  // **TEST**
   controller = initVizCtrl(graph, scene, shapes);
-
-  // initialize quadtree
-  graph.qt = quadtree()
-    .x(n => {
-      return n.data.x; 
-    })
-    .y(n => {
-      return n.data.y; 
-    });
-
-  graph.forEachNode(function(node) {
-    graph.qt.add(node);
-  });
 
   // TODO: this, but properly (async for-loop?)
   updateLoadingText({message: "Creating Quadtree", completed: 100});
   
   document.getElementById("overlay").style.display = "none";
   // draw map
-  let color = [0.8, 0.8, 0.8, 1.0];
-  scene.addObject(nodes, edges, { color: color, type: gl.LINES, layer: "base" });
+  scene.addObject(nodes, edges, { color: colors.baseMap, type: gl.LINES, layer: "base" });
 
   attachHandlers();
 

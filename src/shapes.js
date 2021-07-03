@@ -1,3 +1,5 @@
+const colors = require("./theme").default;
+
 module.exports = function (gl) {
   return {
     target: {
@@ -12,6 +14,8 @@ module.exports = function (gl) {
               2.6, -6.0,
               0, 0],
       indices: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1],
+      color: colors.targetPin,
+      scale: 5,
       drawType: gl.TRIANGLE_FAN
     },
     start: {
@@ -33,6 +37,8 @@ module.exports = function (gl) {
               -2.1213, -2.1213,
               -1.04, -2.814],
       indices: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,1],
+      color: colors.startPin,
+      scale: 4,
       drawType: gl.TRIANGLE_FAN 
     }
   }

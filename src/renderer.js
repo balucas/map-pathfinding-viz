@@ -7,6 +7,8 @@ const mat3 = require("gl-matrix/mat3");
 const vertexShader = glsl.file("./shader/vertex.glsl");
 const fragmentShader = glsl.file("./shader/fragment.glsl");
 
+const colors = require("./theme").default;
+
 module.exports = function(gl) {
   const programInfo = twgl.createProgramInfo(gl, [vertexShader, fragmentShader]);
   const resolution = [gl.canvas.width, gl.canvas.height]; 
@@ -52,6 +54,7 @@ module.exports = function(gl) {
   function addObject(verts, inds, props) {
     props.transforms = props.transforms ? props.transforms : { x: 0, y: 0, scale: 1, zoom: true };
     props.layer = props.layer ? props.layer : "mid";
+    props.offset = props.offset ? props.offset : 0;
 
     const bufferData = {
       position: { numComponents: 2, data: new Float32Array(verts) },
@@ -62,7 +65,8 @@ module.exports = function(gl) {
       bufferInfo: bufferInfo,
       color: props.color,
       drawType: props.type,
-      transforms: props.transforms
+      transforms: props.transforms,
+      offset: props.offset
     };
     
     if (typeof props.layerIndex !== "undefined") {
@@ -81,7 +85,7 @@ module.exports = function(gl) {
     gl.useProgram(programInfo.program);
     twgl.setBuffersAndAttributes(gl, programInfo, obj.bufferInfo);
     twgl.setUniforms(programInfo, uniforms);
-    twgl.drawBufferInfo(gl, obj.bufferInfo, obj.drawType);
+    twgl.drawBufferInfo(gl, obj.bufferInfo, obj.drawType, obj.bufferInfo.numElements, obj.offset);
   }
   
   return {
@@ -97,7 +101,7 @@ module.exports = function(gl) {
       twgl.resizeCanvasToDisplaySize(gl.canvas);
 
       gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
-      gl.clearColor(0.0, 0.06, 0.21, 1.0);
+      gl.clearColor(...colors.background);
       gl.clear(gl.COLOR_BUFFER_BIT);
       
       updateViewProjection();
