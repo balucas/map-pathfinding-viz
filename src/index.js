@@ -45,28 +45,14 @@ function main(){
   
   document.getElementById("overlay").style.display = "none";
   // draw map
-  obj = scene.addObject(nodes, edges, {
+  scene.addObject(nodes, edges, {
      color: colors.baseMap, 
      type: gl.LINES, 
      layer: "base",
     });
   
   attachHandlers();
-
-  i = edges.length * 2 * 4;
   scene.draw();
-}
-
-var obj;
-var i = 0;
-function testRender(){
-  let inds = new Uint32Array(edges);
-  scene.updateIndexOffset(inds, i, obj);
-  i -= 1000;
-  scene.draw();
-  if (i > 0) {
-    //requestAnimationFrame(testRender);  
-  }
 }
 
 function updateLoadingText(progress) {

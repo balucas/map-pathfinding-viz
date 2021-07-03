@@ -25,7 +25,15 @@ module.exports = function(gl, graph, verts, scene, shapes) {
   const STNodes = {};
   var searchDrawing;
   
+  function reset() {
+    delete(STNodes.start); 
+    delete(STNodes.target); 
+    scene.clearLayer("mid");
+    scene.clearLayer("top");
+  }
   function setNode(pos, name) {
+    if (name == "start") reset();
+
     const node = quadtree.find(pos[0], pos[1]); 
     const [x, y] = [node.data.x, node.data.y];
 
@@ -99,8 +107,8 @@ module.exports = function(gl, graph, verts, scene, shapes) {
       scene.updateIndexOffset(animData, offset, searchDrawing);
       scene.draw();
       
-      offset -= 100 * 4;
       if (offset != 0) {
+        offset -= 100 * 4;
         requestAnimationFrame(animateSearch);
       } else {
         drawPath();
@@ -108,7 +116,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
     }
     
     function drawPath() {
-       
+      debugger;   
     }
   }
   
