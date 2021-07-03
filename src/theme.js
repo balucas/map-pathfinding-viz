@@ -3,7 +3,7 @@ module.exports = {
     background: [0.157, 0.173, 0.204, 1],
     baseMap: [1.0, 1.0, 1.0, 1],
     searchPath: [0.223, 1, 0.07, 1],
-    path: [],
+    path: [1, 0.07, 1, 1],
 
     // start pin colors
     startPin: [0.05, 0.30, 0.669, 1],

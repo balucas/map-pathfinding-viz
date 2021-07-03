@@ -92,7 +92,13 @@ module.exports = function(gl, graph, verts, scene, shapes) {
     let a = STNodes.start;
     let b = STNodes.target;
     const searchData = pathfinder.find(a.node.id, b.node.id);
+    if (!searchData) {
+      // No path found!
+      return;
+    }
+
     const animData = new Uint32Array(searchData.visited.reverse());
+    const pathData = new Uint32Array(searchData.path.map(node => node.id))
     searchDrawing = scene.addObject(verts, animData, {
       color: colors.searchPath,
       type: gl.LINES,
@@ -116,7 +122,12 @@ module.exports = function(gl, graph, verts, scene, shapes) {
     }
     
     function drawPath() {
-      debugger;   
+      scene.addObject(verts, pathData, {
+        color: colors.path,
+        type: gl.LINE_STRIP,
+        layer: "mid"
+      })
+      scene.draw();
     }
   }
   
