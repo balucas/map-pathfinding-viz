@@ -1,7 +1,8 @@
 const d3 = require("d3-quadtree");
 const aStar = require("ngraph.path").aStar;
+const colors = require("./theme").default;
 
-module.exports = function(graph, scene, shapes) {
+module.exports = function(gl, graph, verts, scene, shapes) {
   // init pathfinder
   const pathfinder = aStar(graph, {
     distance: pythagoreanDist,
@@ -22,6 +23,7 @@ module.exports = function(graph, scene, shapes) {
   });
   
   const STNodes = {};
+  var searchDrawing;
   
   function setNode(pos, name) {
     const node = quadtree.find(pos[0], pos[1]); 
@@ -37,6 +39,8 @@ module.exports = function(graph, scene, shapes) {
     STNodes[name].node = node;
     updatePin(x, y, name);
     scene.draw();
+    
+    if (name == "target") startFind();
   }
   
   function initPin(x, y, name) {
@@ -71,8 +75,47 @@ module.exports = function(graph, scene, shapes) {
     });
   }
   
+  function startFind() {
+    if (!STNodes.start || !STNodes.target) {
+      console.error("Missing start/target node");
+      return;
+    }
+    
+    let a = STNodes.start;
+    let b = STNodes.target;
+    const searchData = pathfinder.find(a.node.id, b.node.id);
+    const animData = new Uint32Array(searchData.visited.reverse());
+    searchDrawing = scene.addObject(verts, animData, {
+      color: colors.searchPath,
+      type: gl.LINES,
+      layer: "mid",
+    });
+
+    var offset = animData.length *  4;
+    animateSearch();
+
+    function animateSearch() {
+      offset = offset < 0 ? 0 : offset;
+      scene.updateIndexOffset(animData, offset, searchDrawing);
+      scene.draw();
+      
+      offset -= 100 * 4;
+      if (offset != 0) {
+        requestAnimationFrame(animateSearch);
+      } else {
+        drawPath();
+      }
+    }
+    
+    function drawPath() {
+       
+    }
+  }
+  
+  
   return {
-    setNode
+    setNode,
+    startFind
   }
 }
 

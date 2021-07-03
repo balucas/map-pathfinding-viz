@@ -2,7 +2,7 @@ module.exports = {
   default: {
     background: [0.157, 0.173, 0.204, 1],
     baseMap: [1.0, 1.0, 1.0, 1],
-    searchMap: [],
+    searchPath: [0.223, 1, 0.07, 1],
     path: [],
 
     // start pin colors

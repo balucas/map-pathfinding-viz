@@ -77,6 +77,13 @@ module.exports = function(gl) {
     return obj;
   }
   
+  function updateIndexOffset(inds, offset, obj) {
+    const bufferData = {
+      indices:  { numComponents: 2, data: new Uint32Array(inds.buffer, offset) }
+    };
+    obj.bufferInfo = twgl.createBufferInfoFromArrays(gl, bufferData, obj.bufferInfo);
+  }
+  
   function drawObject(obj) {
     const uniforms = {
       u_color: obj.color,
@@ -88,9 +95,15 @@ module.exports = function(gl) {
     twgl.drawBufferInfo(gl, obj.bufferInfo, obj.drawType, obj.bufferInfo.numElements, obj.offset);
   }
   
+  function clearLayer(layer) {
+    sceneLayers[layer].length = 0;
+  }
+  
   return {
     addObject,
+    updateIndexOffset,
     updateViewProjection,
+    clearLayer,
     camera,
     viewProjectionMat,
 

@@ -5,6 +5,7 @@ const mat3 = require("gl-matrix/mat3");
 const createDrawing = require("./renderer");
 const initShapes = require("./shapes");
 const initVizCtrl = require("./pathviz");
+const twgl = require("twgl.js");
 
 const colors = require("./theme").default;
 
@@ -37,18 +38,35 @@ function main(){
   // TODO: this, but properly (async for-loop?)
   updateLoadingText({message: "Creating Quadtree", completed: 14});
   
-  controller = initVizCtrl(graph, scene, shapes);
+  controller = initVizCtrl(gl, graph, nodes, scene, shapes);
 
   // TODO: this, but properly (async for-loop?)
   updateLoadingText({message: "Creating Quadtree", completed: 100});
   
   document.getElementById("overlay").style.display = "none";
   // draw map
-  scene.addObject(nodes, edges, { color: colors.baseMap, type: gl.LINES, layer: "base" });
-
+  obj = scene.addObject(nodes, edges, {
+     color: colors.baseMap, 
+     type: gl.LINES, 
+     layer: "base",
+    });
+  
   attachHandlers();
 
-  requestAnimationFrame(scene.draw);
+  i = edges.length * 2 * 4;
+  scene.draw();
+}
+
+var obj;
+var i = 0;
+function testRender(){
+  let inds = new Uint32Array(edges);
+  scene.updateIndexOffset(inds, i, obj);
+  i -= 1000;
+  scene.draw();
+  if (i > 0) {
+    //requestAnimationFrame(testRender);  
+  }
 }
 
 function updateLoadingText(progress) {
