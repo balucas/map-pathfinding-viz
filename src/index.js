@@ -17,10 +17,14 @@ const shapes = initShapes(gl);
 const scene = createDrawing(gl);
 scene.draw();
 
-// GET MAP DATA
+// WebGL map data
 let nodes;
 let edges;
+
+// Pathfinding 
 let graph;
+let controller;
+
 loadMap("toronto", updateLoadingText)
   .then((res) => {
     nodes = res.nodes;
@@ -28,9 +32,6 @@ loadMap("toronto", updateLoadingText)
     graph = res.mapGraph;
     main();
   })
-
-let sliceNum = 605000;
-let controller;
 
 function main(){
   // TODO: this, but properly (async for-loop?)
@@ -47,19 +48,7 @@ function main(){
 
   attachHandlers();
 
-  //testRender();
   requestAnimationFrame(scene.draw);
-}
-
-function testRender() {
-  //scene.updateObject(nodes, edges.slice(sliceNum), ind); // not supported
-  scene.draw();
-  sliceNum -= 1000;
-  if (sliceNum > 0) {
-    requestAnimationFrame(testRender);
-  } else {
-    return;
-  }
 }
 
 function updateLoadingText(progress) {

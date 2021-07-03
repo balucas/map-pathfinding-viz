@@ -25,27 +25,50 @@ module.exports = function(graph, scene, shapes) {
   
   function setNode(pos, name) {
     const node = quadtree.find(pos[0], pos[1]); 
-    const transforms = {
-      x: node.data.x,
-      y: node.data.y,
-      scale: shapes[name].scale,
-      zoom: false
-    };
+    const [x, y] = [node.data.x, node.data.y];
 
     if (!STNodes[name]) {
       STNodes[name] = {
         node: node,
-        sceneObj: scene.addObject(shapes[name].verts, shapes[name].indices, {
-          color: shapes[name].color,
-          type: shapes[name].drawType,
-          layer: "top",
-        })
+        sceneObjs: initPin(x, y, name) 
       }
     } 
     
     STNodes[name].node = node;
-    STNodes[name].sceneObj.transforms = transforms;
+    updatePin(x, y, name);
     scene.draw();
+  }
+  
+  function initPin(x, y, name) {
+    const elements = shapes[name].elements;
+    const sceneObjs = [];
+    
+    elements.forEach(el => {
+      let transforms = {
+        x: x,
+        y: y,
+        scale: el.scale,
+        zoom: false 
+      }
+      
+      sceneObjs.push(
+        scene.addObject(el.verts, el.indices, {
+          color: el.color,
+          type: el.drawType,
+          layer: "top",
+          transforms: transforms
+        })
+      )
+    });
+
+    return sceneObjs;
+  }
+  
+  function updatePin(x, y, name) {
+    STNodes[name].sceneObjs.forEach(obj => {
+      obj.transforms.x = x;
+      obj.transforms.y = y;
+    });
   }
   
   return {
