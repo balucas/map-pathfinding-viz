@@ -1,5 +1,6 @@
 const d3 = require("d3-quadtree");
 const aStar = require("ngraph.path").aStar;
+const asyncFor = require("rafor");
 const colors = require("./theme").default;
 
 module.exports = function(gl, graph, verts, scene, shapes) {
@@ -24,6 +25,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
   
   const STNodes = {};
   var searchDrawing;
+  var isSearching = false;
   
   function reset() {
     delete(STNodes.start); 
@@ -32,6 +34,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
     scene.clearLayer("top");
   }
   function setNode(pos, name) {
+    if (isSearching) return false;
     if (name == "start") reset();
 
     const node = quadtree.find(pos[0], pos[1]); 
@@ -49,6 +52,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
     scene.draw();
     
     if (name == "target") startFind();
+    return true;
   }
   
   function initPin(x, y, name) {
@@ -84,6 +88,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
   }
   
   function startFind() {
+    isSearching = true;
     if (!STNodes.start || !STNodes.target) {
       console.error("Missing start/target node");
       return;
@@ -118,6 +123,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
         requestAnimationFrame(animateSearch);
       } else {
         drawPath();
+        isSearching = false;
       }
     }
     

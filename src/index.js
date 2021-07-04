@@ -35,14 +35,7 @@ loadMap("toronto", updateLoadingText)
   })
 
 function main(){
-  // TODO: this, but properly (async for-loop?)
-  updateLoadingText({message: "Creating Quadtree", completed: 14});
-  
   controller = initVizCtrl(gl, graph, nodes, scene, shapes);
-
-  // TODO: this, but properly (async for-loop?)
-  updateLoadingText({message: "Creating Quadtree", completed: 100});
-  
   document.getElementById("overlay").style.display = "none";
   // draw map
   scene.addObject(nodes, edges, {
@@ -58,7 +51,6 @@ function main(){
 function updateLoadingText(progress) {
   let msg = progress.message;
   let pct = progress.completed;
-  console.log(pct);
   document.getElementById("progress").innerHTML = `${msg}: ${pct}%`;
 }
 
@@ -150,8 +142,8 @@ function attachHandlers() {
         startInvViewProjMat,
         getClipSpaceMousePosition(e));
     
-    controller.setNode(pos, name);
-    name = name == "start" ? "target" : "start";
+    if (controller.setNode(pos, name))
+      name = name == "start" ? "target" : "start";
   }
   
   function moveCamera(e) {
