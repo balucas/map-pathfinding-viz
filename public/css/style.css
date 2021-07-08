@@ -25,6 +25,49 @@ canvas {
     vertical-align: middle;
 }
 
+.about-screen, .help-screen{
+    display: none;
+    color: white;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    position: absolute;
+    width: 100%;
+    height: 100%;   
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    align-items: center;
+    justify-content: center;
+}
+.background-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;   
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(255,255,255,0.1);
+    z-index: 2;
+}
+
+.about-text, .help-text{
+    /*
+    border-style: solid;
+    border-color: white;
+    border-width: 1px;
+    */
+    color: lightgray;
+    background-color: #282C34;
+    padding: 14px;
+    width: 400px; 
+    height: fit-content;
+    display: block;
+    justify-content: center;
+    z-index: 3;
+}
+
 .loading-text{
     display:flex;
     height:100%;
@@ -33,7 +76,8 @@ canvas {
 }
 
 .panel-container{
-    background-color: rgba(255,255,255,0.1);
+    display:none;
+    background-color: #282C34;
     position: absolute;
     top: 20px;
     left:20px;
@@ -47,7 +91,7 @@ canvas {
 .panel-button{
     font-size: 16px;
     border: none;
-    color: white;
+    color: lightgray;
     background-color: rgba(255,255,255,0.1);
 }
 

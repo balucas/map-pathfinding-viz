@@ -1,11 +1,11 @@
 const d3 = require("d3-quadtree");
 const getNormals = require("polyline-normals");
-const aStar = require("ngraph.path").aStar;
+const ngraphpath = require("ngraph.path");
 const colors = require("./theme").default;
 
-module.exports = function(gl, graph, verts, scene, shapes) {
+module.exports = function(gl, graph, verts, scene, shapes, algo) {
   // init pathfinder
-  const pathfinder = aStar(graph, {
+  const pathfinder = ngraphpath[algo](graph, {
     distance: pythagoreanDist,
     heuristic: pythagoreanDist
   });

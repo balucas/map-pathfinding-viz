@@ -14,7 +14,44 @@
             </h1>
         </div>
     </div> 
-    <div class="panel-container">
+    <div class="about-screen" id="about">
+        <div class="background-overlay" onclick="handleClose()"></div>
+        <div class="about-text">
+           <h3>Map Pathfinding Visualizer</h3>
+           <p>
+               This app was developed to visualize how pathfinding algorithms search through a real-life map.
+           </p>
+           <p>
+               Currently only supports A* search, but I'll be adding more pathfinding algorithms in the future
+           </p>
+           <p>Created using WebGL</p>
+           <a href="https://github.com/balucas/map-pathfinding-viz" style="color: lightblue;text-decoration: none;">Github</a>
+        </div> 
+    </div>
+    <div class="help-screen" id="help" >
+        <div class="background-overlay" onclick="handleClose()"></div>
+        <div class="help-text">
+            <h3>Instructions:</h3>
+            <ul>
+                <li>
+                    Click and hold to pan 
+                </li>
+                <li>
+                    Scroll to zoom in/out
+                </li>
+                <li>
+                    Click to set starting point 
+                </li>
+                <li>
+                    Click again to set destination point
+                </li>
+                <li>
+                    Once animation is completed, clicking will reset the map and set the starting point
+                </li>
+            </ul>
+        </div> 
+    </div>
+    <div class="panel-container" id="panel">
         <div class="panel-content">
             <label for="city">City:</label>
             <select name="city" id="city">
@@ -25,7 +62,7 @@
         <div class="panel-content">
             <label for="algo">Search Algorithm:</label>
             <select name="algo" id="algo">
-                <option value="astar">A* Search</option>
+                <option value="aStar">A* Search</option>
                 <option value="nba">New Bidirectional A* Search</option>
             </select>
         </div>
@@ -40,9 +77,15 @@
 <script>
     function handleAboutClick(){
         console.log("click about")
+        document.getElementById("about").style.display = "flex";
     }
     function handleHelpClick(){
         console.log("click help")
+        document.getElementById("help").style.display = "flex";
+    }
+    function handleClose(){
+        document.getElementById("about").style.display = "none";
+        document.getElementById("help").style.display = "none";
     }
 </script>
 </html>

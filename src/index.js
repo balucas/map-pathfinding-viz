@@ -19,8 +19,13 @@ const shapes = initShapes(gl);
 const scene = createDrawing(gl);
 scene.draw();
 
-// map
-let city = "toronto";
+const cityDropdown = document.getElementById("city");
+const algoDropdown = document.getElementById("algo");
+
+cityDropdown.onchange = (e) => {
+  reset();
+  init();
+}
 
 // WebGL map data
 let nodes;
@@ -35,7 +40,12 @@ let handlers;
 init();
 
 function init(){
+  // map
+  let city = cityDropdown.value;
+  let algo = algoDropdown.value;
+
   document.getElementById("overlay").style.display = "";
+  document.getElementById("panel").style.display = "none";
   loadMap(city, updateLoadingText)
     .then((res) => {
       nodes = res.nodes;
@@ -43,8 +53,9 @@ function init(){
       graph = res.mapGraph;
     })
     .then( () => {
-      controller = initVizCtrl(gl, graph, nodes, scene, shapes);
+      controller = initVizCtrl(gl, graph, nodes, scene, shapes, algo);
       document.getElementById("overlay").style.display = "none";
+      document.getElementById("panel").style.display = "block";
       // draw map
       scene.addObject(nodes, edges, {
          color: colors.baseMap, 
@@ -59,6 +70,8 @@ function init(){
 
 function reset() {
   handlers.reset();
+  handlers = {};
+  controller = {};
   scene.clearLayer("base"); 
   scene.clearLayer("mid"); 
   scene.clearLayer("top"); 
