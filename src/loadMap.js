@@ -40,7 +40,6 @@ module.exports = function(name, progress) {
         resolve();
       }, {
         step: 2,
-        probeElements: 1000
       })
     })
   }
@@ -51,7 +50,7 @@ module.exports = function(name, progress) {
       y: array[index + 1]
     });
     progress({ 
-      message: "Processing nodes", 
+      message: "Initializing graph nodes", 
       completed: Math.round(100 * index / (array.length - 1))
     })
   }
@@ -64,7 +63,6 @@ module.exports = function(name, progress) {
         resolve();
       }, {
         step: 2,
-        probeElements: 1000
       })
     })
   }
@@ -74,7 +72,7 @@ module.exports = function(name, progress) {
     array[index + 1] -= 1;
     mapGraph.addLink(array[index], array[index + 1]);
     progress({ 
-      message: "Processing edges", 
+      message: "Adding node links", 
       completed: Math.round(100 * index / (array.length - 1))
     })
   }

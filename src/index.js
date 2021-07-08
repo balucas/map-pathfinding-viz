@@ -10,6 +10,7 @@ const twgl = require("twgl.js");
 const colors = require("./theme").default;
 
 const canvas = document.createElement("canvas");
+const progressText = document.getElementById("progress");
 document.body.appendChild(canvas);
 
 const gl = canvas.getContext("webgl");
@@ -51,7 +52,7 @@ function main(){
 function updateLoadingText(progress) {
   let msg = progress.message;
   let pct = progress.completed;
-  document.getElementById("progress").innerHTML = `${msg}: ${pct}%`;
+  progressText.textContent = `${msg}: ${pct}%`;
 }
 
 function attachHandlers() {
