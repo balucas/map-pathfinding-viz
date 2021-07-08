@@ -34,6 +34,7 @@ module.exports = function(gl, graph, verts, scene, shapes, algo) {
     scene.clearLayer("top");
   }
   function setNode(pos, name) {
+    document.getElementById("message").textContent = ""
     if (isSearching) return false;
     if (name == "start") reset();
 
@@ -98,8 +99,10 @@ module.exports = function(gl, graph, verts, scene, shapes, algo) {
     let a = STNodes.start;
     let b = STNodes.target;
     const searchData = pathfinder.find(a.node.id, b.node.id);
-    if (!searchData) {
+    if (searchData instanceof Array) {
       // No path found!
+      document.getElementById("message").textContent = "No path found!"
+      isSearching = false;
       return;
     }
 

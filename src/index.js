@@ -19,13 +19,7 @@ const shapes = initShapes(gl);
 const scene = createDrawing(gl);
 scene.draw();
 
-const cityDropdown = document.getElementById("city");
-const algoDropdown = document.getElementById("algo");
-
-cityDropdown.onchange = (e) => {
-  reset();
-  init();
-}
+let cityName, algoName;
 
 // WebGL map data
 let nodes;
@@ -37,23 +31,36 @@ let controller;
 
 let handlers;
 
+const cityDropdown = document.getElementById("city");
+const algoDropdown = document.getElementById("algo");
+
+cityDropdown.onchange = (e) => {
+  reset();
+  init();
+}
+
+algoDropdown.onchange = (e) => {
+  algoName = algoDropdown.value;
+  controller = initVizCtrl(gl, graph, nodes, scene, shapes, algoName);
+}
+
 init();
 
 function init(){
   // map
-  let city = cityDropdown.value;
-  let algo = algoDropdown.value;
+  cityName = cityDropdown.value;
+  algoName = algoDropdown.value;
 
   document.getElementById("overlay").style.display = "";
   document.getElementById("panel").style.display = "none";
-  loadMap(city, updateLoadingText)
+  loadMap(cityName, updateLoadingText)
     .then((res) => {
       nodes = res.nodes;
       edges = res.edges;
       graph = res.mapGraph;
     })
     .then( () => {
-      controller = initVizCtrl(gl, graph, nodes, scene, shapes, algo);
+      controller = initVizCtrl(gl, graph, nodes, scene, shapes, algoName);
       document.getElementById("overlay").style.display = "none";
       document.getElementById("panel").style.display = "block";
       // draw map
@@ -78,6 +85,7 @@ function reset() {
   scene.camera.x = -10000;
   scene.camera.y = -5000;
   scene.camera.zoom = 0.10;
+  document.getElementById("message").textContent = "";
 }
 
 function updateLoadingText(progress) {
