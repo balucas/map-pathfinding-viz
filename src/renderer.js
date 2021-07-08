@@ -5,20 +5,23 @@ const twgl = require("twgl.js");
 const mat3 = require("gl-matrix/mat3");
 
 const vertexShader = glsl.file("./shader/vertex.glsl");
+const vertexShader2D = glsl.file("./shader/vertex2D.glsl");
 const fragmentShader = glsl.file("./shader/fragment.glsl");
+const getNormals = require("polyline-normals");
 
 const colors = require("./theme").default;
 
 module.exports = function(gl) {
   const programInfo = twgl.createProgramInfo(gl, [vertexShader, fragmentShader]);
+  const programInfo2D = twgl.createProgramInfo(gl, [vertexShader2D, fragmentShader]);
   const resolution = [gl.canvas.width, gl.canvas.height]; 
   const viewProjectionMat = mat3.create();
   const sceneLayers = { base: [], mid: [], top: [] };
 
   const camera = {
-    x: -33948,
-    y: -17689,
-    zoom: 0.0271311
+    x: 0,//-33948,
+    y: 0,//-17689,
+    zoom: 1//0.0271311
    }
 
   twgl.addExtensionsToContext(gl);
@@ -63,6 +66,7 @@ module.exports = function(gl) {
     const bufferInfo = twgl.createBufferInfoFromArrays(gl, bufferData);
     const obj = {
       bufferInfo: bufferInfo,
+      programInfo: programInfo,
       color: props.color,
       drawType: props.type,
       transforms: props.transforms,
@@ -77,6 +81,79 @@ module.exports = function(gl) {
     return obj;
   }
   
+  function add2DLine(path, color) {
+    let tags = getNormals(path, false);
+    let normals = dup(tags.map(x => x[0]));
+    let miters = dup(tags.map(x => x[1]), true);
+    let positions = dup(path);
+    let indices = createIndices(path.length - 1);
+    
+    const bufferData = {
+      position: { numComponents: 2, data: new Float32Array(pack(positions)) },
+      normal:   { numComponents: 2, data: new Float32Array(pack(normals)) },
+      miter:    { numComponents: 1, data: new Float32Array(pack(miters)) },
+      indices:  { data: new Uint32Array(indices) }
+    }
+    
+    debugger;
+    const bufferInfo = twgl.createBufferInfoFromArrays(gl, bufferData);
+    const obj = {
+      bufferInfo: bufferInfo,
+      programInfo: programInfo2D,
+      color: color,
+      drawType: gl.TRIANGLES,
+      transforms: { x: 0, y: 0, scale: 1, zoom: true },
+      offset: 0
+    };
+    
+    sceneLayers.mid.push(obj);
+    return obj;
+    
+    function dup(nestedArr, mirror) {
+      var out = [];
+      nestedArr.forEach(x => {
+        let x1 = mirror ? -x : x;
+        out.push(x1,x);
+      })
+      return out;
+    }
+
+    function createIndices(length) {
+      let indices = new Uint32Array(length * 6)
+      let c = 0, index = 0
+      for (let j=0; j<length; j++) {
+        let i = index
+        indices[c++] = i + 0 
+        indices[c++] = i + 1 
+        indices[c++] = i + 2 
+        indices[c++] = i + 2 
+        indices[c++] = i + 1 
+        indices[c++] = i + 3 
+        index += 2
+      }
+      return indices
+    }
+
+    function pack(arr, type) {
+      type = type || 'float32'
+
+      if (!arr[0] || !arr[0].length) {
+        return arr
+      }
+
+      var dim = arr[0].length
+      var out = new Float32Array(arr.length * dim)
+      var k = 0
+
+      for (var i = 0; i < arr.length; i++)
+      for (var j = 0; j < dim; j++) {
+        out[k++] = arr[i][j]
+      }
+
+      return out
+    }
+  }
+  
   function updateIndexOffset(inds, offset, obj) {
     const bufferData = {
       indices:  { numComponents: 2, data: new Uint32Array(inds.buffer, offset) }
@@ -87,11 +164,12 @@ module.exports = function(gl) {
   function drawObject(obj) {
     const uniforms = {
       u_color: obj.color,
-      u_matrix: computeMatrixUniform(obj.transforms)
+      u_matrix: computeMatrixUniform(obj.transforms),
+      u_thickness: 5/camera.zoom
     }
-    gl.useProgram(programInfo.program);
-    twgl.setBuffersAndAttributes(gl, programInfo, obj.bufferInfo);
-    twgl.setUniforms(programInfo, uniforms);
+    gl.useProgram(obj.programInfo.program);
+    twgl.setBuffersAndAttributes(gl, obj.programInfo, obj.bufferInfo);
+    twgl.setUniforms(obj.programInfo, uniforms);
     twgl.drawBufferInfo(gl, obj.bufferInfo, obj.drawType, obj.bufferInfo.numElements, obj.offset);
   }
   
@@ -101,6 +179,7 @@ module.exports = function(gl) {
   
   return {
     addObject,
+    add2DLine,
     updateIndexOffset,
     updateViewProjection,
     clearLayer,

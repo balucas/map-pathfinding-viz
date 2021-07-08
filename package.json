@@ -32,6 +32,7 @@
     "glsl-noise": "0.0.0",
     "ngraph.graph": "^19.1.0",
     "ngraph.path": "git+https://github.com/balucas/ngraph.path.git",
+    "polyline-normals": "^2.0.2",
     "rafor": "^1.0.2",
     "twgl.js": "^4.2.0"
   }

@@ -1,6 +1,6 @@
 const d3 = require("d3-quadtree");
+const getNormals = require("polyline-normals");
 const aStar = require("ngraph.path").aStar;
-const asyncFor = require("rafor");
 const colors = require("./theme").default;
 
 module.exports = function(gl, graph, verts, scene, shapes) {
@@ -79,7 +79,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
 
     return sceneObjs;
   }
-  
+
   function updatePin(x, y, name) {
     STNodes[name].sceneObjs.forEach(obj => {
       obj.transforms.x = x;
@@ -91,6 +91,7 @@ module.exports = function(gl, graph, verts, scene, shapes) {
     isSearching = true;
     if (!STNodes.start || !STNodes.target) {
       console.error("Missing start/target node");
+      isSearching = false;
       return;
     }
     
@@ -128,11 +129,17 @@ module.exports = function(gl, graph, verts, scene, shapes) {
     }
     
     function drawPath() {
-      scene.addObject(verts, pathData, {
+      let pathNodes = []
+      pathData.forEach(el => pathNodes.push([verts[el*2], verts[el*2 + 1]]));
+      
+      scene.add2DLine(pathNodes, colors.path);
+
+      /*scene.addObject(verts, pathData, {
         color: colors.path,
         type: gl.LINE_STRIP,
         layer: "mid"
       })
+      */
       scene.draw();
     }
   }
