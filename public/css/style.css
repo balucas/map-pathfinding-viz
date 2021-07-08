@@ -31,3 +31,49 @@ canvas {
     justify-content: center;
     align-items: center;
 }
+
+.panel-container{
+    background-color: rgba(255,255,255,0.1);
+    position: absolute;
+    top: 20px;
+    left:20px;
+    padding: 5px;
+    /*transform: translateX(-50%);*/
+}
+
+.panel-content{
+    padding: 3px;
+}
+.panel-button{
+    font-size: 16px;
+    border: none;
+    color: white;
+    background-color: rgba(255,255,255,0.1);
+}
+
+button{
+    cursor: pointer;
+}
+
+select{
+    width:100%;
+    cursor: pointer;
+    background-color: rgba(255,255,255,0.1);
+    color: white;
+    padding: 2px;
+    border: none;
+    appearance: none;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: 24px;
+    text-align-last: center;
+    margin-top: 5px;
+}
+select:focus{
+    outline: none;
+}
+label{
+    padding: 3px;
+    color: lightgray;
+    font-size: 16px;
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}

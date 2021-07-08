@@ -19,6 +19,9 @@ const shapes = initShapes(gl);
 const scene = createDrawing(gl);
 scene.draw();
 
+// map
+let city = "toronto";
+
 // WebGL map data
 let nodes;
 let edges;
@@ -27,26 +30,41 @@ let edges;
 let graph;
 let controller;
 
-loadMap("toronto", updateLoadingText)
-  .then((res) => {
-    nodes = res.nodes;
-    edges = res.edges;
-    graph = res.mapGraph;
-    main();
-  })
+let handlers;
 
-function main(){
-  controller = initVizCtrl(gl, graph, nodes, scene, shapes);
-  document.getElementById("overlay").style.display = "none";
-  // draw map
-  scene.addObject(nodes, edges, {
-     color: colors.baseMap, 
-     type: gl.LINES, 
-     layer: "base",
-    });
-  
-  attachHandlers();
-  scene.draw();
+init();
+
+function init(){
+  document.getElementById("overlay").style.display = "";
+  loadMap(city, updateLoadingText)
+    .then((res) => {
+      nodes = res.nodes;
+      edges = res.edges;
+      graph = res.mapGraph;
+    })
+    .then( () => {
+      controller = initVizCtrl(gl, graph, nodes, scene, shapes);
+      document.getElementById("overlay").style.display = "none";
+      // draw map
+      scene.addObject(nodes, edges, {
+         color: colors.baseMap, 
+         type: gl.LINES, 
+         layer: "base",
+        });
+      
+      handlers = attachHandlers();
+      scene.draw();
+    })
+}
+
+function reset() {
+  handlers.reset();
+  scene.clearLayer("base"); 
+  scene.clearLayer("mid"); 
+  scene.clearLayer("top"); 
+  scene.camera.x = 0;
+  scene.camera.y = 0;
+  scene.camera.zoom = 1;
 }
 
 function updateLoadingText(progress) {
@@ -59,7 +77,7 @@ function attachHandlers() {
   window.addEventListener('resize', handleResize);
   canvas.addEventListener('mousedown', handleMouseDown);
   canvas.addEventListener('wheel', handleMouseWheel);
-  
+
   // handle window resize
   function handleResize(e) {
     scene.draw();
@@ -166,6 +184,14 @@ function attachHandlers() {
       (v0 * m[0 * 3 + 1] + v1 * m[1 * 3 + 1] + m[2 * 3 + 1]) / d,
     ];
   }
+  
+  return {
+    reset() {
+      window.removeEventListener('resize', handleResize);
+      canvas.removeEventListener('mousedown', handleMouseDown);
+      canvas.removeEventListener('wheel', handleMouseWheel);
+    } 
+  };
 }
 
 function getClipSpaceMousePosition(e) {

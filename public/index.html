@@ -14,8 +14,35 @@
             </h1>
         </div>
     </div> 
+    <div class="panel-container">
+        <div class="panel-content">
+            <label for="city">City:</label>
+            <select name="city" id="city">
+                <option value="toronto">Toronto</option>
+                <option value="paris">Paris</option>
+            </select>
+        </div>
+        <div class="panel-content">
+            <label for="algo">Search Algorithm:</label>
+            <select name="algo" id="algo">
+                <option value="astar">A* Search</option>
+                <option value="nba">New Bidirectional A* Search</option>
+            </select>
+        </div>
+        <div class="panel-content">
+            <button class="panel-button" type="button" onclick="handleAboutClick()">About</button>
+            <button class="panel-button" type="button" onclick="handleHelpClick()">Help</button>
+        </div>
+    </div>
 </body>
 
 <script src="js/app.js"></script>
-
+<script>
+    function handleAboutClick(){
+        console.log("click about")
+    }
+    function handleHelpClick(){
+        console.log("click help")
+    }
+</script>
 </html>
