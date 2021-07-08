@@ -133,13 +133,6 @@ module.exports = function(gl, graph, verts, scene, shapes) {
       pathData.forEach(el => pathNodes.push([verts[el*2], verts[el*2 + 1]]));
       
       scene.add2DLine(pathNodes, colors.path);
-
-      /*scene.addObject(verts, pathData, {
-        color: colors.path,
-        type: gl.LINE_STRIP,
-        layer: "mid"
-      })
-      */
       scene.draw();
     }
   }
