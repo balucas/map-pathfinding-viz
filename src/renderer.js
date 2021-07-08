@@ -19,9 +19,9 @@ module.exports = function(gl) {
   const sceneLayers = { base: [], mid: [], top: [] };
 
   const camera = {
-    x: 0,//-33948,
-    y: 0,//-17689,
-    zoom: 1//0.0271311
+    x: -10000,
+    y: -5000,
+    zoom: 0.10
    }
 
   twgl.addExtensionsToContext(gl);

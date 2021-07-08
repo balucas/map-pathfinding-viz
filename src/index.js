@@ -75,9 +75,9 @@ function reset() {
   scene.clearLayer("base"); 
   scene.clearLayer("mid"); 
   scene.clearLayer("top"); 
-  scene.camera.x = 0;
-  scene.camera.y = 0;
-  scene.camera.zoom = 1;
+  scene.camera.x = -10000;
+  scene.camera.y = -5000;
+  scene.camera.zoom = 0.10;
 }
 
 function updateLoadingText(progress) {
