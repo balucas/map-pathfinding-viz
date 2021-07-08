@@ -2,7 +2,7 @@
   "name": "mpv",
   "version": "1.0.0",
   "description": "",
-  "main": "src/index.js",
+  "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "gulp build",
@@ -35,5 +35,8 @@
     "polyline-normals": "^2.0.2",
     "rafor": "^1.0.2",
     "twgl.js": "^4.2.0"
+  },
+  "engines": {
+    "node": "12.14.0"
   }
 }
