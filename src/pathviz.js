@@ -96,6 +96,8 @@ module.exports = function(gl, graph, verts, scene, shapes, algo) {
       return;
     }
     
+    disableOptions(true);
+
     let a = STNodes.start;
     let b = STNodes.target;
     const searchData = pathfinder.find(a.node.id, b.node.id);
@@ -103,6 +105,7 @@ module.exports = function(gl, graph, verts, scene, shapes, algo) {
       // No path found!
       document.getElementById("message").textContent = "No path found!"
       isSearching = false;
+      disableOptions(false);
       return;
     }
 
@@ -131,12 +134,18 @@ module.exports = function(gl, graph, verts, scene, shapes, algo) {
       }
     }
     
+    function disableOptions(disabled) {
+      document.getElementById("city").disabled = disabled;
+      document.getElementById("algo").disabled = disabled;
+    }
+    
     function drawPath() {
       let pathNodes = []
       pathData.forEach(el => pathNodes.push([verts[el*2], verts[el*2 + 1]]));
       
       scene.add2DLine(pathNodes, colors.path);
       scene.draw();
+      disableOptions(false);
     }
   }
   
