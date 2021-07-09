@@ -42,6 +42,11 @@ cityDropdown.onchange = (e) => {
 algoDropdown.onchange = (e) => {
   algoName = algoDropdown.value;
   controller = initVizCtrl(gl, graph, nodes, scene, shapes, algoName);
+  scene.clearLayer("mid");
+  scene.clearLayer("top");
+  scene.draw();
+  handlers.reset();
+  handlers = attachHandlers();
 }
 
 init();
@@ -178,6 +183,7 @@ function attachHandlers() {
   
   var name = "start";
   function handleClick(e) {
+    debugger;
     const pos = transformPoint(
         startInvViewProjMat,
         getClipSpaceMousePosition(e));
@@ -211,7 +217,8 @@ function attachHandlers() {
       window.removeEventListener('resize', handleResize);
       canvas.removeEventListener('mousedown', handleMouseDown);
       canvas.removeEventListener('wheel', handleMouseWheel);
-    } 
+    },
+    name
   };
 }
 
