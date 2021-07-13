@@ -1,7 +1,7 @@
 const d3 = require("d3-quadtree");
 const getNormals = require("polyline-normals");
 const ngraphpath = require("ngraph.path");
-const colors = require("./theme").default;
+const colors = require("./lib/theme").default;
 
 module.exports = function(gl, graph, verts, scene, shapes) {
   // init quadtree

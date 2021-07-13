@@ -9,7 +9,7 @@ const vertexShader2D = glsl.file("./shader/vertex2D.glsl");
 const fragmentShader = glsl.file("./shader/fragment.glsl");
 const getNormals = require("polyline-normals");
 
-const colors = require("./theme").default;
+const colors = require("./lib/theme").default;
 
 module.exports = function(gl) {
   const programInfo = twgl.createProgramInfo(gl, [vertexShader, fragmentShader]);

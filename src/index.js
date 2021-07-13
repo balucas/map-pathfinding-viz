@@ -1,13 +1,12 @@
 "use strict";
 
-const loadMap = require("./loadMap");
+const loadMap = require("./lib/loadMap");
 const mat3 = require("gl-matrix/mat3");
 const createDrawing = require("./renderer");
-const initShapes = require("./shapes");
+const initShapes = require("./lib/shapes");
 const initVizCtrl = require("./pathviz");
-const twgl = require("twgl.js");
 
-const colors = require("./theme").default;
+const colors = require("./lib/theme").default;
 
 const canvas = document.createElement("canvas");
 const progressText = document.getElementById("progress");
