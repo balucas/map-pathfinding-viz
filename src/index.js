@@ -41,12 +41,10 @@ cityDropdown.onchange = (e) => {
 
 algoDropdown.onchange = (e) => {
   algoName = algoDropdown.value;
-  controller = initVizCtrl(gl, graph, nodes, scene, shapes, algoName);
+  controller.initPathfinder(algoName);
   scene.clearLayer("mid");
-  scene.clearLayer("top");
   scene.draw();
-  handlers.reset();
-  handlers = attachHandlers();
+  controller.startFind();
 }
 
 init();
@@ -65,7 +63,8 @@ function init(){
       graph = res.mapGraph;
     })
     .then( () => {
-      controller = initVizCtrl(gl, graph, nodes, scene, shapes, algoName);
+      controller = initVizCtrl(gl, graph, nodes, scene, shapes);
+      controller.initPathfinder(algoName);
       document.getElementById("overlay").style.display = "none";
       document.getElementById("panel").style.display = "block";
       // draw map

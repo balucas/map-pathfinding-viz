@@ -3,13 +3,7 @@ const getNormals = require("polyline-normals");
 const ngraphpath = require("ngraph.path");
 const colors = require("./theme").default;
 
-module.exports = function(gl, graph, verts, scene, shapes, algo) {
-  // init pathfinder
-  const pathfinder = ngraphpath[algo](graph, {
-    distance: pythagoreanDist,
-    heuristic: pythagoreanDist
-  });
-  
+module.exports = function(gl, graph, verts, scene, shapes) {
   // init quadtree
   const quadtree = d3.quadtree()
     .x(n => {
@@ -22,10 +16,17 @@ module.exports = function(gl, graph, verts, scene, shapes, algo) {
   graph.forEachNode(function(node) {
     quadtree.add(node);
   });
-  
   const STNodes = {};
-  var searchDrawing;
+
+  var pathfinder, searchDrawing;
   var isSearching = false;
+  
+  function initPathfinder(algo) {
+    pathfinder = ngraphpath[algo](graph, {
+      distance: pythagoreanDist,
+      heuristic: pythagoreanDist
+    });
+  }
   
   function reset() {
     delete(STNodes.start); 
@@ -152,7 +153,8 @@ module.exports = function(gl, graph, verts, scene, shapes, algo) {
   
   return {
     setNode,
-    startFind
+    startFind,
+    initPathfinder
   }
 }
 
