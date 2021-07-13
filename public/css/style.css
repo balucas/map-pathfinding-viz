@@ -1,15 +1,3 @@
-body {
-    margin: 0;
-}
-
-canvas {
-    display: block;
-    margin: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: white;
-}
-
 .loading-screen{
     color: white;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
@@ -88,6 +76,7 @@ canvas {
 .panel-content{
     padding: 3px;
 }
+
 .panel-button{
     font-size: 16px;
     border: none;
@@ -112,15 +101,40 @@ select{
     text-align-last: center;
     margin-top: 5px;
 }
+
+select > option{
+    color:black;
+}
+
 select:focus{
     outline: none;
 }
+
 label{
     padding: 3px;
     color: lightgray;
     font-size: 16px;
     font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
 }
+
+
+a{
+    color: lightblue;
+    text-decoration: none;
+}
+
+body {
+    margin: 0;
+}
+
+canvas {
+    display: block;
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: white;
+}
+
 
 #message {
     text-align: center;
